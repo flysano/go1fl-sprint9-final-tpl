@@ -25,16 +25,21 @@ func TestGenerateRandomElements(t *testing.T) {
 }
 
 func TestMaximun(t *testing.T) {
-	t.Run("Empty slice", func(t *testing.T) {
-		slice := make([]int, 0, 0)
-		num := maximum(slice)
-		assert.Zero(t, num)
-	})
+	tests := []struct {
+		name     string
+		input    []int
+		expected int
+	}{
+		{"empty slice", []int{}, 0},
+		{"one element", []int{32}, 32},
+		{"negative number", []int{-3, -4, -1}, -1},
+		{"mixed", []int{-5, 6, 19, 0, -45}, 19},
+	}
 
-	t.Run("One element slice", func(t *testing.T) {
-		slice := []int{45}
-		num := maximum(slice)
-		assert.Equal(t, slice[0], num)
-	})
-
+	for _, tst := range tests {
+		t.Run(tst.name, func(t *testing.T) {
+			v := maximum(tst.input)
+			assert.Equal(t, tst.expected, v)
+		})
+	}
 }

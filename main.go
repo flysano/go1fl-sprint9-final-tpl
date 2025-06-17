@@ -12,23 +12,19 @@ const (
 	CHUNKS = 8
 )
 
-// generateRandomElements generates random elements.
 func generateRandomElements(size int) []int {
 	if size <= 0 {
-		fmt.Printf("Slice creation error with size %d\n", size)
 		return []int{}
 	}
-	slice := make([]int, size, size)
-	for i := 0; i < size; i++ {
+	slice := make([]int, size)
+	for i := range slice {
 		slice[i] = rand.Int()
 	}
 	return slice
 }
 
-// maximum returns the maximum number of elements.
 func maximum(data []int) int {
-	if len(data) == 0 || len(data) == 1 {
-		fmt.Printf("size")
+	if len(data) == 0 {
 		return 0
 	}
 	max := data[0]
@@ -40,41 +36,31 @@ func maximum(data []int) int {
 	return max
 }
 
-// maxChunks returns the maximum number of elements in a chunks.
 func maxChunks(data []int) int {
-	sliceSize := len(data) / CHUNKS
-	maxSlice := make([]int, CHUNKS)
 	var wg sync.WaitGroup
+	var mu sync.Mutex
+
+	sliceSize := len(data) / CHUNKS
+	maxNumsSlice := make([]int, CHUNKS)
 
 	wg.Add(CHUNKS)
 	for i := 0; i < CHUNKS; i++ {
-		go func(i int) {
+		startSlice := i * sliceSize
+		endSlice := startSlice + sliceSize
+		if i == CHUNKS-1 {
+			endSlice = len(data)
+		}
+		go func(index, start, end int) {
 			defer wg.Done()
-
-			startSlice := i * sliceSize
-			endSlice := startSlice + sliceSize
-
-			if i == CHUNKS-1 {
-				endSlice = len(data)
-			}
-			max := data[startSlice]
-			for _, num := range data[startSlice:endSlice] {
-				if num > max {
-					max = num
-				}
-			}
-			maxSlice[i] = max
-		}(i)
+			mu.Lock() //гонки быть не должно, но для большей надежности добавил мьютекс
+			max := maximum(data[start:end])
+			mu.Unlock()
+			maxNumsSlice[index] = max
+		}(i, startSlice, endSlice)
 	}
 	wg.Wait()
 
-	endMax := maxSlice[0]
-	for _, num := range maxSlice[1:] {
-		if num > endMax {
-			endMax = num
-		}
-	}
-	return endMax
+	return maximum(maxNumsSlice)
 }
 
 func main() {
