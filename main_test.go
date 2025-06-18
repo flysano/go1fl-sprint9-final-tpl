@@ -27,7 +27,7 @@ func TestMaximun(t *testing.T) {
 	}{
 		{"empty slice", []int{}, 0},
 		{"one element", []int{32}, 32},
-		{"mixed", []int{5, 6, 19, 0, 45}, 19},
+		{"mixed", []int{5, 6, 19, 0, 45}, 45},
 	}
 
 	for _, tst := range tests {
