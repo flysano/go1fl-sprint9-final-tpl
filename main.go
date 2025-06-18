@@ -38,7 +38,6 @@ func maximum(data []int) int {
 
 func maxChunks(data []int) int {
 	var wg sync.WaitGroup
-	var mu sync.Mutex
 
 	sliceSize := len(data) / CHUNKS
 	maxNumsSlice := make([]int, CHUNKS)
@@ -52,9 +51,7 @@ func maxChunks(data []int) int {
 		}
 		go func(index, start, end int) {
 			defer wg.Done()
-			mu.Lock() //гонки быть не должно, но для большей надежности добавил мьютекс
 			max := maximum(data[start:end])
-			mu.Unlock()
 			maxNumsSlice[index] = max
 		}(i, startSlice, endSlice)
 	}

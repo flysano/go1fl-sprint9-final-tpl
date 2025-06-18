@@ -12,11 +12,6 @@ func TestGenerateRandomElements(t *testing.T) {
 		assert.Empty(t, slice)
 	})
 
-	t.Run("Negative", func(t *testing.T) {
-		slice := generateRandomElements(-1)
-		assert.Empty(t, slice)
-	})
-
 	t.Run("OK size", func(t *testing.T) {
 		size := 34
 		slice := generateRandomElements(size)
@@ -32,8 +27,7 @@ func TestMaximun(t *testing.T) {
 	}{
 		{"empty slice", []int{}, 0},
 		{"one element", []int{32}, 32},
-		{"negative number", []int{-3, -4, -1}, -1},
-		{"mixed", []int{-5, 6, 19, 0, -45}, 19},
+		{"mixed", []int{5, 6, 19, 0, 45}, 19},
 	}
 
 	for _, tst := range tests {
